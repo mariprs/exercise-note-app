@@ -7,4 +7,16 @@ class AddExerciseEntity {
     required this.title,
     this.imagePath,
   });
+  factory AddExerciseEntity.fromJson(Map<String, dynamic> json) {
+    return AddExerciseEntity(
+      title: json['title'],
+      imagePath: json['imagePath'],
+    );
+  }
+  Map<String, dynamic> toJson() {
+    return {
+      'title': title,
+      'imagePath': imagePath,
+    };
+  }
 }
