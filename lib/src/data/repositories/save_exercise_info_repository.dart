@@ -3,7 +3,7 @@ import 'package:exercise_app/src/domain/entities/save_exercise_info.dart';
 import 'package:exercise_app/src/domain/repositories/save_exercise_info_repository.dart';
 
 class SaveExerciseInfoRepositoryImpl implements SaveExerciseInfoRepository {
-  final ExerciseStorage storage;
+  final ExerciseStorageImpl storage;
 
   SaveExerciseInfoRepositoryImpl(this.storage);
 
