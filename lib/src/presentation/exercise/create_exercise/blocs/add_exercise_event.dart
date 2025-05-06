@@ -14,3 +14,5 @@ class AddExercisePressed extends AddExerciseEvent {
   @override
   List<Object?> get props => [exercise];
 }
+
+

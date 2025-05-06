@@ -4,7 +4,14 @@ import 'dart:io';
 import 'package:exercise_app/src/domain/entities/add_exercise_entity.dart';
 import 'package:exercise_app/src/domain/entities/save_exercise_info.dart';
 
-class ExerciseStorage {
+abstract class ExerciseStorage {
+  Future<void> save(SaveExerciseInfo info);
+  Future<List<SaveExerciseInfo>> getAll();
+  Future<void> saveCustomExercise(AddExerciseEntity info);
+  Future<List<AddExerciseEntity>> getAllCustomExercises();
+}
+
+class ExerciseStorageImpl implements ExerciseStorage {
   final String _exerciseDataFile = 'exercise_data.json';
   final String _customExerciseFile = 'custom_exercises.json';
 
@@ -19,7 +26,9 @@ class ExerciseStorage {
         .createTemp(); // trocar depois por path_provider
     return File('${dir.path}/$_customExerciseFile');
   }
+
 //salva treino atualizado
+  @override
   Future<void> save(SaveExerciseInfo info) async {
     final file = await _exerciseDataRef;
     List<SaveExerciseInfo> currentData = await getAll();
@@ -28,6 +37,7 @@ class ExerciseStorage {
     await file.writeAsString(json.encode(jsonData));
   }
 
+  @override
   Future<List<SaveExerciseInfo>> getAll() async {
     final file = await _exerciseDataRef;
     if (!await file.exists()) return [];
@@ -36,22 +46,23 @@ class ExerciseStorage {
     return decoded.map((e) => SaveExerciseInfo.fromJson(e)).toList();
   }
 
-
 //salva um exercicío personalizado
-Future<void> saveCustomExercise(AddExerciseEntity info) async {
-  final file = await _customExerciseRef;
-  List<AddExerciseEntity> current = await getAllCustomExercises();
-  current.add(info);
-  final jsonData = current.map((e) => e.toJson()).toList();
-  await file.writeAsString(json.encode(jsonData));
-}
+  @override
+  Future<void> saveCustomExercise(AddExerciseEntity info) async {
+    final file = await _customExerciseRef;
+    List<AddExerciseEntity> current = await getAllCustomExercises();
+    current.add(info);
+    final jsonData = current.map((e) => e.toJson()).toList();
+    await file.writeAsString(json.encode(jsonData));
+  }
 
 //retornando exercícios personalizados
-Future<List<AddExerciseEntity>> getAllCustomExercises() async {
-  final file = await _customExerciseRef;
-  if (!await file.exists()) return [];
-  final content = await file.readAsString();
-  final decoded = json.decode(content) as List;
-  return decoded.map((e) => AddExerciseEntity.fromJson(e)).toList();
+  @override
+  Future<List<AddExerciseEntity>> getAllCustomExercises() async {
+    final file = await _customExerciseRef;
+    if (!await file.exists()) return [];
+    final content = await file.readAsString();
+    final decoded = json.decode(content) as List;
+    return decoded.map((e) => AddExerciseEntity.fromJson(e)).toList();
   }
 }
